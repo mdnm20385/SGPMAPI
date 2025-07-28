@@ -12,6 +12,9 @@ using SGPMAPI.Email;
 using SGPMAPI.Interfaces;
 using SGPMAPI.Procura;
 var builder = WebApplication.CreateBuilder(args);
+
+
+var xxxxx=new PathString();
 // Adding Authentication
 builder.Services.AddAuthentication(options =>
 {
