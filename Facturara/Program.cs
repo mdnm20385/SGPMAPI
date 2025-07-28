@@ -14,8 +14,9 @@ using SGPMAPI.Procura;
 var builder = WebApplication.CreateBuilder(args);
 
 
-var xxxxx=new PathString();
-// Adding Authentication
+var xxxxx = "Meu Projecto de Teste";
+    // Adding Authentication
+    
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

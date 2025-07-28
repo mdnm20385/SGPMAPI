@@ -7,6 +7,7 @@ namespace DAL.Conexao
 {
     public class GCon : IDisposable
     {
+
         #region Conexao
 
         public SqlConnection? NResult { get; set; }
@@ -30,6 +31,8 @@ namespace DAL.Conexao
         #endregion
         private void FCon()
         {
+
+            var xxxxx = "Meu Projecto de Teste";
             if (NResult.State != ConnectionState.Closed)
             {
                 NResult.Close();

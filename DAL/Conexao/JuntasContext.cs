@@ -7,6 +7,7 @@ using Param = Model.Models.Facturacao.Param;
 namespace DAL.Conexao;
 public sealed class SGPMContext : DbContext
 {
+    
     public SGPMContext(DbContextOptions<SGPMContext> options) : base(options) { }
 
     #region Tables SGPM
