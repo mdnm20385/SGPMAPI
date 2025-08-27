@@ -4,6 +4,7 @@ using DAL.Conexao;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(SGPMContext))]
-    partial class SGPMContextModelSnapshot : ModelSnapshot
+    [Migration("20250805111120_addtbltentativaserros")]
+    partial class addtbltentativaserros
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,7 +66,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MenuPermissionsStamp");
 
-                    b.ToTable("Menu", (string)null);
+                    b.ToTable("Menu");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.MenuChildrenItem", b =>
@@ -103,7 +106,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("ParentMenuStamp");
 
-                    b.ToTable("MenuChildrenItems", (string)null);
+                    b.ToTable("MenuChildrenItems");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.MenuPermissions", b =>
@@ -121,7 +124,7 @@ namespace DAL.Migrations
 
                     b.HasKey("MenuPermissionsStamp");
 
-                    b.ToTable("MenuPermission", (string)null);
+                    b.ToTable("MenuPermission");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.MenuTag", b =>
@@ -139,7 +142,7 @@ namespace DAL.Migrations
 
                     b.HasKey("MenuTagStamp");
 
-                    b.ToTable("MenuTag", (string)null);
+                    b.ToTable("MenuTag");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.Menuusr", b =>
@@ -160,7 +163,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Menuusrstamp");
 
-                    b.ToTable("Menuusr", (string)null);
+                    b.ToTable("Menuusr");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.Param", b =>
@@ -512,7 +515,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Paramstamp");
 
-                    b.ToTable("Param", (string)null);
+                    b.ToTable("Param");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.ParamImp", b =>
@@ -551,7 +554,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("Paramstamp");
 
-                    b.ToTable("ParamImp", (string)null);
+                    b.ToTable("ParamImp");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.Paramemail", b =>
@@ -586,7 +589,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("Paramstamp");
 
-                    b.ToTable("Paramemail", (string)null);
+                    b.ToTable("Paramemail");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.Paramgct", b =>
@@ -624,7 +627,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("Paramstamp");
 
-                    b.ToTable("Paramgct", (string)null);
+                    b.ToTable("Paramgct");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.Parampv", b =>
@@ -646,7 +649,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("Paramstamp");
 
-                    b.ToTable("Parampv", (string)null);
+                    b.ToTable("Parampv");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.UsuarioMenu", b =>
@@ -701,7 +704,7 @@ namespace DAL.Migrations
 
                     b.HasKey("armazemStamp");
 
-                    b.ToTable("Armazem", (string)null);
+                    b.ToTable("Armazem");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Artigo", b =>
@@ -797,7 +800,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("artigoGeralStamp");
 
-                    b.ToTable("Artigo", (string)null);
+                    b.ToTable("Artigo");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.ArtigoContrato", b =>
@@ -838,7 +841,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("contratoStamp");
 
-                    b.ToTable("ArtigoContrato", (string)null);
+                    b.ToTable("ArtigoContrato");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.ArtigoGeral", b =>
@@ -866,7 +869,7 @@ namespace DAL.Migrations
 
                     b.HasKey("artigoGeralStamp");
 
-                    b.ToTable("ArtigoGeral", (string)null);
+                    b.ToTable("ArtigoGeral");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.CodCarta", b =>
@@ -894,7 +897,7 @@ namespace DAL.Migrations
 
                     b.HasKey("codCartaStamp");
 
-                    b.ToTable("CodCarta", (string)null);
+                    b.ToTable("CodCarta");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Contrato", b =>
@@ -931,7 +934,7 @@ namespace DAL.Migrations
 
                     b.HasKey("contratoStamp");
 
-                    b.ToTable("Contrato", (string)null);
+                    b.ToTable("Contrato");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Curso", b =>
@@ -965,7 +968,7 @@ namespace DAL.Migrations
 
                     b.HasKey("cursoStamp");
 
-                    b.ToTable("Curso", (string)null);
+                    b.ToTable("Curso");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Desconto", b =>
@@ -1004,7 +1007,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("Desconto", (string)null);
+                    b.ToTable("Desconto");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Email", b =>
@@ -1037,7 +1040,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("Email", (string)null);
+                    b.ToTable("Email");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Entrada", b =>
@@ -1093,7 +1096,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("unidadeStamp");
 
-                    b.ToTable("Entrada", (string)null);
+                    b.ToTable("Entrada");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Entrega", b =>
@@ -1118,7 +1121,7 @@ namespace DAL.Migrations
 
                     b.HasKey("fornecimentoStamp");
 
-                    b.ToTable("Entrega", (string)null);
+                    b.ToTable("Entrega");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Escalao", b =>
@@ -1172,7 +1175,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("patStamp");
 
-                    b.ToTable("Escalao", (string)null);
+                    b.ToTable("Escalao");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Especial", b =>
@@ -1206,7 +1209,7 @@ namespace DAL.Migrations
 
                     b.HasKey("especialStamp");
 
-                    b.ToTable("Especial", (string)null);
+                    b.ToTable("Especial");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Especie", b =>
@@ -1234,7 +1237,7 @@ namespace DAL.Migrations
 
                     b.HasKey("especieStamp");
 
-                    b.ToTable("Especie", (string)null);
+                    b.ToTable("Especie");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Existencia", b =>
@@ -1270,7 +1273,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("artigoStamp");
 
-                    b.ToTable("Existencia", (string)null);
+                    b.ToTable("Existencia");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Fornecedor", b =>
@@ -1304,7 +1307,7 @@ namespace DAL.Migrations
 
                     b.HasKey("fornecedorStamp");
 
-                    b.ToTable("Fornecedor", (string)null);
+                    b.ToTable("Fornecedor");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Fornecimento", b =>
@@ -1361,7 +1364,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("unidadeStamp");
 
-                    b.ToTable("Fornecimento", (string)null);
+                    b.ToTable("Fornecimento");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Instituicao", b =>
@@ -1410,7 +1413,7 @@ namespace DAL.Migrations
 
                     b.HasKey("instituicaoStamp");
 
-                    b.ToTable("Instituicao", (string)null);
+                    b.ToTable("Instituicao");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Licenca", b =>
@@ -1441,7 +1444,7 @@ namespace DAL.Migrations
 
                     b.HasKey("licencaStamp");
 
-                    b.ToTable("Licenca", (string)null);
+                    b.ToTable("Licenca");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Mil", b =>
@@ -1625,7 +1628,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("Mil", (string)null);
+                    b.ToTable("Mil");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilAgre", b =>
@@ -1703,7 +1706,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilAgre", (string)null);
+                    b.ToTable("MilAgre");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilConde", b =>
@@ -1748,7 +1751,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilConde", (string)null);
+                    b.ToTable("MilConde");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilDoc", b =>
@@ -1793,7 +1796,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilDoc", (string)null);
+                    b.ToTable("MilDoc");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilEmFor", b =>
@@ -1895,7 +1898,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilEmFor", (string)null);
+                    b.ToTable("MilEmFor");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilEmail", b =>
@@ -1923,7 +1926,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("MilEmail", (string)null);
+                    b.ToTable("MilEmail");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilEspecial", b =>
@@ -1983,7 +1986,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilEspecial", (string)null);
+                    b.ToTable("MilEspecial");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilFa", b =>
@@ -2032,7 +2035,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("MilFa", (string)null);
+                    b.ToTable("MilFa");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilFor", b =>
@@ -2095,7 +2098,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilFor", (string)null);
+                    b.ToTable("MilFor");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilFot", b =>
@@ -2128,7 +2131,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilFot", (string)null);
+                    b.ToTable("MilFot");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilFuncao", b =>
@@ -2206,7 +2209,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilFuncao", (string)null);
+                    b.ToTable("MilFuncao");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilIDigital", b =>
@@ -2252,7 +2255,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("MilIDigital", (string)null);
+                    b.ToTable("MilIDigital");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilLice", b =>
@@ -2300,7 +2303,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilLice", (string)null);
+                    b.ToTable("MilLice");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilLingua", b =>
@@ -2348,7 +2351,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilLingua", (string)null);
+                    b.ToTable("MilLingua");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilMed", b =>
@@ -2406,7 +2409,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("MilMed", (string)null);
+                    b.ToTable("MilMed");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilPeEmerg", b =>
@@ -2487,7 +2490,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilPeEmerg", (string)null);
+                    b.ToTable("MilPeEmerg");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilProm", b =>
@@ -2538,7 +2541,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilProm", (string)null);
+                    b.ToTable("MilProm");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilRea", b =>
@@ -2575,7 +2578,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("MilRea", (string)null);
+                    b.ToTable("MilRea");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilReco", b =>
@@ -2623,7 +2626,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilReco", (string)null);
+                    b.ToTable("MilReco");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilReg", b =>
@@ -2668,7 +2671,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilReg", (string)null);
+                    b.ToTable("MilReg");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilRetReaSal", b =>
@@ -2713,7 +2716,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilRetReaSal", (string)null);
+                    b.ToTable("MilRetReaSal");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSa", b =>
@@ -2761,7 +2764,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilSa", (string)null);
+                    b.ToTable("MilSa");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSalMensal", b =>
@@ -2896,7 +2899,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilSalMensal", (string)null);
+                    b.ToTable("MilSalMensal");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSalario", b =>
@@ -2951,7 +2954,7 @@ namespace DAL.Migrations
 
                     b.HasKey("milStamp");
 
-                    b.ToTable("MilSalario", (string)null);
+                    b.ToTable("MilSalario");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSit", b =>
@@ -2993,7 +2996,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilSit", (string)null);
+                    b.ToTable("MilSit");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSitCrim", b =>
@@ -3056,7 +3059,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilSitCrim", (string)null);
+                    b.ToTable("MilSitCrim");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSitDisc", b =>
@@ -3113,7 +3116,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilSitDisc", (string)null);
+                    b.ToTable("MilSitDisc");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSitQPActivo", b =>
@@ -3158,7 +3161,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("MilSitQPActivo", (string)null);
+                    b.ToTable("MilSitQPActivo");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.MilSubEspecial", b =>
@@ -3197,7 +3200,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milEspecialStamp");
 
-                    b.ToTable("MilSubEspecial", (string)null);
+                    b.ToTable("MilSubEspecial");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.QualifcTecnica", b =>
@@ -3243,7 +3246,7 @@ namespace DAL.Migrations
 
                     b.HasKey("qualifcTecnicaStamp");
 
-                    b.ToTable("QualifcTecnica", (string)null);
+                    b.ToTable("QualifcTecnica");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Reg", b =>
@@ -3274,7 +3277,7 @@ namespace DAL.Migrations
 
                     b.HasKey("regStamp");
 
-                    b.ToTable("Reg", (string)null);
+                    b.ToTable("Reg");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.SubEspecial", b =>
@@ -3313,7 +3316,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("especialStamp");
 
-                    b.ToTable("SubEspecial", (string)null);
+                    b.ToTable("SubEspecial");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Subsidio", b =>
@@ -3352,7 +3355,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("Subsidio", (string)null);
+                    b.ToTable("Subsidio");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Subunidade1", b =>
@@ -3490,7 +3493,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("subunidadeStamp");
 
-                    b.ToTable("Subunidade1", (string)null);
+                    b.ToTable("Subunidade1");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Subunidade2", b =>
@@ -3634,7 +3637,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("Subunidade11subunidade1Stamp");
 
-                    b.ToTable("Subunidade2", (string)null);
+                    b.ToTable("Subunidade2");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Suplemento", b =>
@@ -3673,7 +3676,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("Suplemento", (string)null);
+                    b.ToTable("Suplemento");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.Telefone", b =>
@@ -3709,7 +3712,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("milStamp");
 
-                    b.ToTable("Telefone", (string)null);
+                    b.ToTable("Telefone");
                 });
 
             modelBuilder.Entity("Model.Models.SGPM.UsuarioLoginTentativa", b =>
@@ -3738,7 +3741,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UsuarioLoginTentativa", (string)null);
+                    b.ToTable("UsuarioLoginTentativa");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Busca", b =>
@@ -3774,7 +3777,7 @@ namespace DAL.Migrations
 
                     b.HasKey("buscaStamp");
 
-                    b.ToTable("Busca", (string)null);
+                    b.ToTable("Busca");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Cat", b =>
@@ -3830,7 +3833,7 @@ namespace DAL.Migrations
 
                     b.HasKey("CatStamp");
 
-                    b.ToTable("Cat", (string)null);
+                    b.ToTable("Cat");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Distrito", b =>
@@ -3881,7 +3884,7 @@ namespace DAL.Migrations
 
                     b.HasKey("distritoStamp");
 
-                    b.ToTable("Distrito", (string)null);
+                    b.ToTable("Distrito");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Localidade", b =>
@@ -3926,7 +3929,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("postAdmStamp");
 
-                    b.ToTable("Localidade", (string)null);
+                    b.ToTable("Localidade");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Orgao", b =>
@@ -4044,7 +4047,7 @@ namespace DAL.Migrations
 
                     b.HasKey("orgaoStamp");
 
-                    b.ToTable("Orgao", (string)null);
+                    b.ToTable("Orgao");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Pais", b =>
@@ -4095,7 +4098,7 @@ namespace DAL.Migrations
 
                     b.HasKey("paisStamp");
 
-                    b.ToTable("Pais", (string)null);
+                    b.ToTable("Pais");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.ParamAno", b =>
@@ -4129,7 +4132,7 @@ namespace DAL.Migrations
 
                     b.HasKey("ParamAnoStamp");
 
-                    b.ToTable("ParamAno", (string)null);
+                    b.ToTable("ParamAno");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Pat", b =>
@@ -4197,7 +4200,7 @@ namespace DAL.Migrations
 
                     b.HasKey("patStamp");
 
-                    b.ToTable("Pat", (string)null);
+                    b.ToTable("Pat");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.PermForm", b =>
@@ -4247,7 +4250,7 @@ namespace DAL.Migrations
 
                     b.HasKey("permFormStamp");
 
-                    b.ToTable("PermForm", (string)null);
+                    b.ToTable("PermForm");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Permissao", b =>
@@ -4307,7 +4310,7 @@ namespace DAL.Migrations
 
                     b.HasKey("permissaoStamp");
 
-                    b.ToTable("Permissao", (string)null);
+                    b.ToTable("Permissao");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.PostAdm", b =>
@@ -4360,7 +4363,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("distritoStamp");
 
-                    b.ToTable("PostAdm", (string)null);
+                    b.ToTable("PostAdm");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Provincia", b =>
@@ -4403,7 +4406,7 @@ namespace DAL.Migrations
 
                     b.HasKey("provinciaStamp");
 
-                    b.ToTable("Provincia", (string)null);
+                    b.ToTable("Provincia");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Ramo", b =>
@@ -4521,7 +4524,7 @@ namespace DAL.Migrations
 
                     b.HasKey("RamoStamp");
 
-                    b.ToTable("Ramo", (string)null);
+                    b.ToTable("Ramo");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Subunidade", b =>
@@ -4693,7 +4696,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("unidadeStamp");
 
-                    b.ToTable("Subunidade", (string)null);
+                    b.ToTable("Subunidade");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Unidade", b =>
@@ -4867,7 +4870,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("orgaoStamp");
 
-                    b.ToTable("Unidade", (string)null);
+                    b.ToTable("Unidade");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.Usuario", b =>
@@ -4956,7 +4959,7 @@ namespace DAL.Migrations
 
                     b.HasKey("PaStamp");
 
-                    b.ToTable("Usuario", (string)null);
+                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("Model.Models.SJM.UsuarioSessao", b =>
@@ -5020,7 +5023,7 @@ namespace DAL.Migrations
 
                     b.HasKey("UsuarioSessaoStamp");
 
-                    b.ToTable("UsuarioSessao", (string)null);
+                    b.ToTable("UsuarioSessao");
                 });
 
             modelBuilder.Entity("Model.Models.Facturacao.Menu", b =>

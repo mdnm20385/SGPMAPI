@@ -31,8 +31,7 @@ namespace DAL.Conexao
         #endregion
         private void FCon()
         {
-
-            var xxxxx = "Meu Projecto de Teste";
+            
             if (NResult.State != ConnectionState.Closed)
             {
                 NResult.Close();

@@ -11,7 +11,7 @@ public sealed class SGPMContext : DbContext
     public SGPMContext(DbContextOptions<SGPMContext> options) : base(options) { }
 
     #region Tables SGPM
-  
+    public DbSet<UsuarioLoginTentativa> UsuarioLoginTentativa { get; set; }
     public DbSet<Cat> Cat { get; set; }
     public DbSet<Pat> Pat { get; set; }
     public DbSet<ParamAno> ParamAno { get; set; }
@@ -163,7 +163,6 @@ public sealed class SGPMContext : DbContext
 
             entity.ToTable("UsuarioMenus"); // nome da tabela no banco
         });
-
         SqlConstring.ModelCreating(modelBuilder);
     }
 

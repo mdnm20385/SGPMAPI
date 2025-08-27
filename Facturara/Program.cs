@@ -1,4 +1,4 @@
-using System.Text;
+        using System.Text;
 using DAL.BL;
 using DAL.Classes;
 using DAL.Conexao;
@@ -12,36 +12,31 @@ using SGPMAPI.Email;
 using SGPMAPI.Interfaces;
 using SGPMAPI.Procura;
 var builder = WebApplication.CreateBuilder(args);
-
-
-var xxxxx = "Meu Projecto de Teste";
     // Adding Authentication
-    
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-
 // Adding Jwt Bearer
     .AddJwtBearer(options =>
     {
         options.SaveToken = true;
         options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWT:ValidAudience"],
-            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-        };
+        var validAudiences = builder.Configuration.GetSection("JWT:ValidAudience").Get<string[]>();
+var validIssuers = builder.Configuration.GetSection("JWT:ValidIssuer").Get<string[]>();
+options.TokenValidationParameters = new TokenValidationParameters
+{
+    ValidAudiences = validAudiences,
+    ValidIssuers = validIssuers,
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"] ?? string.Empty))
+};
     });
-
 //TypeScriptConverter.Main();
 //TypeScriptConverter.Sjm();
 //TypeScriptConverter.SGPM();
+//ConvertMysql.ConvertJsonToSqlServer();
 Pbl.ConnectionString = SqlConstring.GetSqlConstring();
 Acesso.NomeChefe = Acesso.PatenteCategoria = "";
 builder.Services.AddControllers();
@@ -51,7 +46,6 @@ builder.Services.AddControllers().
     {
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
-;
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo()
 {
     Title = "SGPM",
@@ -59,8 +53,10 @@ builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo()
 }));
 builder.Services.AddCors(options => options.AddPolicy("Policy", app =>
 {
-    app.WithOrigins("http://localhost:4200", "http://34.10.20.94:3895/", "http://34.10.20.93:3895/",
-        "http://172.20.0.3:3895/"
+    app.WithOrigins("http://localhost:4200", "http://localhost:4201", "http://localhost:4202", "http://localhost:4203", "http://localhost:4204", "http://localhost:4205", 
+        "http://34.10.20.94:3895/", "http://34.10.20.93:3895/",
+        "http://172.20.0.3:3895/", "http://172.23.16.22:4200", "http://5.5.5.2:4200/", "http://192.168.140.1:4200/",
+        "http://192.168.190.1:4200/", "http://192.168.80.1:4200/"
             ).AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
     app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
 }));

@@ -1,9 +1,10 @@
-﻿using System.Data;
-using System.Data.SqlClient;
+﻿
+using System.Data;
 using DAL.BL;
 using DAL.Classes;
 using DAL.Conexao;
 using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Model.Models.Facturacao;
 using Model.Models.Gene;
@@ -54,44 +55,6 @@ namespace SGPMAPI.Procura
                 return fact;
             }
         }
-
-
-
-        // [HttpPost("GetAnyentitywithchildren")]
-        //public async Task<T> GetAnyentitywithchildren<T>() where T : class, new()
-        //{
-        //    //string entityStamp=string tableName= string stampColumnName = "Factstamp";
-
-        //    using (var connection = new SqlConnection(SqlConstring.GetSqlConstring()))
-        //    {
-        //        connection.Open();
-
-        //        // Query main entity
-        //        var entity = connection.QueryFirstOrDefault<T>(
-        //            $"SELECT * FROM {tableName} WHERE {stampColumnName} = @entityStamp", new { entityStamp });
-
-        //        if (entity == null)
-        //            return null;
-
-        //        // Query related collections dynamically
-        //        var entityType = typeof(T);
-        //        foreach (var property in entityType.GetProperties())
-        //        {
-        //            if (property.PropertyType.IsGenericType && typeof(IEnumerable<>).IsAssignableFrom(property.PropertyType.GetGenericTypeDefinition()))
-        //            {
-        //                var collectionType = property.PropertyType.GetGenericArguments()[0];
-        //                var collectionTableName = collectionType.Name; // Assumes table name matches class name
-
-        //                var query = $"SELECT * FROM {collectionTableName} WHERE {stampColumnName} = @entityStamp";
-        //                var collection = connection.Query(collectionType, query, new { entityStamp }).ToList();
-
-        //                property.SetValue(entity, collection);
-        //            }
-        //        }
-
-        //        return entity;
-        //    }
-        //}
         public async Task<bool> DeleteFactAsync(string factstamp)
         {
             var fact = await ApIcontext.Armazem.FirstOrDefaultAsync(f => f.armazemStamp == factstamp);
@@ -99,7 +62,6 @@ namespace SGPMAPI.Procura
             {
                 return false;
             }
-
             ApIcontext.Armazem.Remove(fact);
             await ApIcontext.SaveChangesAsync();
             return true;
@@ -140,6 +102,10 @@ namespace SGPMAPI.Procura
         }
         public async Task<ServiceResponse<Selectview>> Comboboxes17(string tabela, string campo1, string campo2, string condicao, string Campochave)
         {
+            if (condicao.ToLower().Equals("numtabela=2"))
+            {
+
+            }
             if (condicao.ToLower().Equals("vazio"))
             {
                 condicao = "";
@@ -152,7 +118,7 @@ namespace SGPMAPI.Procura
             var quer =
                 $" select {Campochave} Chave, convert(nvarchar(max), {campo1}) Descricao, convert(nvarchar(max), {campo2})  " +
                 $"Ordem from {tabela} {condicao} order by Ordem asc";
-
+        
 
             var dt = SQL.GetGenDt(quer);
             var sss = dt.DtToList<Selects>();
@@ -442,11 +408,10 @@ OFFSET {Convert.ToInt32(num2)} rows FETCH NEXT {Convert.ToInt32(num3)} rows only
                 OrderByCampos = $"{orderby}";
             }
 
-            //if (!orderby.IsNullOrEmpty())
-            //{
-
-            //    OrderByCampos = $"{orderby}";
-            //}
+            if (_ctabela.Equals("vBi", StringComparison.OrdinalIgnoreCase))
+            {
+                buildCond = Condicao2;
+            }
             var sql = $@"  select count(*) from {_ctabela} where {buildCond}  
 select  {chave}  from {_ctabela} where {buildCond} order by {OrderByCampos}  
 OFFSET {Convert.ToInt32(num2)} rows FETCH NEXT {Convert.ToInt32(num3)} rows only";

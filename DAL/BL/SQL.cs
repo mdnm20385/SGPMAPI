@@ -1,24 +1,17 @@
 ﻿using System.Collections;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using ArpLookup;
 using DAL.Classes;
 using DAL.Conexao;
 using DAL.Extensions.Extensions;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Protocols;
 using Microsoft.Reporting.NETCore;
-using Microsoft.VisualBasic.FileIO;
 using Model.Models;
 using Model.Models.Facturacao;
 using Model.Models.SJM;
@@ -110,32 +103,7 @@ namespace DAL.BL
     public static class SQL
     {
 
-        //public static List<MenuDto> MapearMenus(IEnumerable<Menu> menus, string grupoAcessoId)
-        //{
-        //    return menus.Select(m => new MenuDto
-        //    {
-        //        Menustamp = m.Menustamp,
-        //        Nome = m.Nome,
-        //        Rota = m.Rota,
-        //        Tipo = m.Tipo,
-        //        Icone = m.Icone,
-        //        Checked = m.GrupoAcessoMenu.Any(g => g.GrupoAcessostamp == grupoAcessoId),
-        //        Children = MapearMenus(m.Filhos, grupoAcessoId)
-        //    }).ToList();
-        //}
-        //public static List<MenuDto> MapearHierarquia(IEnumerable<Menu> menus, string grupoId)
-        //{
-        //    return menus.Select(m => new MenuDto
-        //    {
-        //        Menustamp = m.Menustamp,
-        //        Nome = m.Nome,
-        //        Rota = m.Rota,
-        //        Tipo = m.Tipo,
-        //        Icone = m.Icone,
-        //        Checked = m.GrupoAcessoMenu.Any(g => g.GrupoAcesso.GrupoAcessostamp == grupoId),
-        //        Children = MapearHierarquia(m.Filhos, grupoId)
-        //    }).ToList();
-        //}
+        
         public static string UnidadDirecDiferenteDaMinha(Usuario us)
         {
             if (!string.IsNullOrEmpty(us.Orgao))

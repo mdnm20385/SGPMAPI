@@ -1,24 +1,30 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Data.SqlClient;
-using System.Globalization;
-using System.Net.Mime;
-using System.Reflection;
-using DAL.BL;
+﻿using DAL.BL;
 using DAL.Classes;
 using DAL.Conexao;
 using DAL.Extensions.Extensions;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Model.Models.Facturacao;
 using Model.Models.Gene;
 using Model.Models.SJM;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using SGPMAPI.Procura;
 using SGPMAPI.SharedClasses;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Data.SqlClient;
+using System.Globalization;
+using System.Linq.Expressions;
+using System.Net.Mime;
+using System.Reflection;
+using System.Text;
 using DataColumn = System.Data.DataColumn;
 using DataTable = System.Data.DataTable;
+using SqlConnection = Microsoft.Data.SqlClient.SqlConnection;
 
 namespace SGPMAPI.Controllers
 {
@@ -37,7 +43,213 @@ namespace SGPMAPI.Controllers
             _webHost = webHost;
         }
 
+        [HttpGet]
+        [Route("CopiaDados")]
+        public async Task<ActionResult<ServiceResponse<Selectview>>> CopiaDados()
+        {
+            ServiceResponse<Selectview> serviceResponse = new ServiceResponse<Selectview>();
+            string mysqlConnStr = "Server=127.0.0.1;Database=gecamo;User Id=root;Password=;Charset=utf8mb4;";
+            using var mysqlConn = new MySqlConnection(mysqlConnStr);
+            mysqlConn.Open();
+            using var sqlConn = new Microsoft.Data.SqlClient.SqlConnection(SqlConstring.GetSqlConstringGecamo());
+            sqlConn.Open();
 
+            // 1. Obter todos os nomes das tabelas do MySQL
+            var tablesCmd = new MySqlCommand("SHOW TABLES", mysqlConn);
+            var tableNames = new List<string>();
+            using (var tablesReader = tablesCmd.ExecuteReader())
+            {
+                while (tablesReader.Read())
+                {
+                    tableNames.Add(tablesReader.GetString(0));
+                }
+            }
+
+            foreach (var tableName in tableNames)
+            {
+                try
+                {
+                    if (!tableName.Equals("personal", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    // 2. Verifica se a tabela já existe no SQL Server
+                    var checkTableCmd = new Microsoft.Data.SqlClient.SqlCommand(
+                        $"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '{tableName}'", sqlConn);
+                    int tableExists = (int)checkTableCmd.ExecuteScalar();
+
+                    // 3. Obtenha os nomes das colunas e tipos
+                    var columnNames = new List<string>();
+                    var columnsInfo = new List<(string Name, string Type, string Nullable)>();
+                    var columnsCmd = new MySqlCommand($"SHOW COLUMNS FROM `{tableName}`", mysqlConn);
+                    using (var columnsReader = columnsCmd.ExecuteReader())
+                    {
+                        while (columnsReader.Read())
+                        {
+                            string colName = columnsReader["Field"].ToString().Normalize(System.Text.NormalizationForm.FormC);
+                            columnNames.Add(colName);
+                            if (tableExists == 0)
+                            {
+                                string colType = columnsReader["Type"].ToString();
+                                string nullable = columnsReader["Null"].ToString() == "NO" ? "NOT NULL" : "NULL";
+                                string sqlType = SqlConstring.MapMySqlTypeToSqlServer(colType);
+                                columnsInfo.Add((colName, sqlType, nullable));
+                            }
+                        }
+                    } // columnsReader fechado aqui!
+
+                    // 4. Cria a tabela no SQL Server se não existir
+                    if (tableExists == 0)
+                    {
+                        string createTableSql = $"CREATE TABLE [{tableName}] (";
+                        for (int i = 0; i < columnsInfo.Count; i++)
+                        {
+                            var col = columnsInfo[i];
+                            if (i > 0) createTableSql += ",";
+                            // Adiciona collation Unicode para colunas texto
+                            string collation = col.Type.StartsWith("NVARCHAR", StringComparison.OrdinalIgnoreCase) || col.Type.StartsWith("NCHAR", StringComparison.OrdinalIgnoreCase)
+                                ? "COLLATE Latin1_General_100_CI_AI_SC"
+                                : "";
+                            createTableSql += $"\n  [{col.Name.Trim()}] {col.Type} {collation} {col.Nullable}";
+                        }
+                        createTableSql += "\n);";
+                        using var sqlCmd = new Microsoft.Data.SqlClient.SqlCommand(createTableSql, sqlConn);
+                        sqlCmd.ExecuteNonQuery();
+                        Console.WriteLine($"Tabela {tableName} criada no SQL Server.");
+                    }
+
+                    // 5. Importa os dados, evitando duplicidade por todas as colunas
+                    var selectCmd = new MySqlCommand($"SELECT * FROM `{tableName}`", mysqlConn);
+                    var selectCmds = new MySqlCommand($"SELECT COUNT(*) total FROM `{tableName}`", mysqlConn);
+                    int total = Convert.ToInt32(selectCmds.ExecuteScalar());
+
+                    int totals = 0;
+
+                    using (var dataReader = selectCmd.ExecuteReader())
+                    {
+
+
+
+                        while (dataReader.Read())
+                        {
+                            totals++;
+                            try
+                            {
+                                var whereClauses = new List<string>();
+                                for (int i = 0; i < dataReader.FieldCount; i++)
+                                {
+                                    var col = dataReader.GetName(i).Normalize(System.Text.NormalizationForm.FormC);
+                                    object value = dataReader.IsDBNull(i) ? null : dataReader.GetValue(i);
+                                    string valueSql;
+
+                                    if (value is sbyte || value is byte || value is ushort || value is short || value is int || value is long || value is float || value is double || value is decimal)
+                                        valueSql = value.ToString();
+                                    else if (value is DateTime)
+                                        valueSql = $"'{((DateTime)value):yyyy-MM-dd HH:mm:ss}'";
+                                    else if (value is bool)
+                                        valueSql = ((bool)value) ? "1" : "0";
+                                    else if (value == null)
+                                        valueSql = "NULL";
+                                    else
+                                        valueSql = $"'{value.ToString().Replace("'", "''")}'";
+
+                                    whereClauses.Add($"[{col.Trim()}] = {valueSql}");
+                                }
+
+                                string whereSql = string.Join(" AND ", whereClauses);
+                                string checkSql = $"SELECT COUNT(*) FROM [{tableName}] WHERE {whereSql}";
+
+                                int exists = 0;
+                                using (var checkCmd = new Microsoft.Data.SqlClient.SqlCommand(checkSql, sqlConn))
+                                {
+                                    try
+                                    {
+                                        exists = (int)checkCmd.ExecuteScalar();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Trate erro de verificação
+                                    }
+                                }
+
+                                if (exists == 0)
+                                {
+                                    var columnsSql = string.Join(",", Enumerable.Range(0, dataReader.FieldCount).Select(i => $"[{dataReader.GetName(i).Trim()}]"));
+                                    var valuesList = new List<string>();
+                                    for (int i = 0; i < dataReader.FieldCount; i++)
+                                    {
+                                        object value = dataReader.IsDBNull(i) ? null : dataReader.GetValue(i);
+
+                                        if (value is sbyte || value is byte || value is ushort)
+                                            value = Convert.ToInt32(value);
+                                        else if (value is short || value is int || value is long || value is float || value is double || value is decimal)
+                                            value = Convert.ToDecimal(value);
+                                        else if (value is bool)
+                                            value = ((bool)value) ? 1 : 0;
+                                        else if (value is byte[])
+                                        {
+                                            // Converte byte[] para hexadecimal (exemplo para SQL Server)
+                                            var bytes = (byte[])value;
+                                            value = "0x" + BitConverter.ToString(bytes).Replace("-", "");
+                                        }
+                                        else if (value == null)
+                                            value = "NULL";
+                                        else if (value is string || value is DateTime)
+                                        {
+                                            string strValue = value?.ToString();
+                                            if (value is DateTime)
+                                            {
+                                                if (strValue != null && int.TryParse(strValue.Substring(0, 2), out int prefix) && prefix >= 10 && prefix <= 18)
+                                                {
+                                                    value = "20" + strValue.Substring(2);
+                                                }
+                                                value = value.ToDateTimeValue();
+                                            }
+                                            if (strValue != null && strValue.Length >= 5 && int.TryParse(strValue.Substring(0, 4), out _) && strValue[4] == '-')
+                                            {
+                                                if (int.TryParse(strValue.Substring(0, 2), out int prefix) && prefix >= 10 && prefix <= 18)
+                                                {
+                                                    value = "20" + strValue.Substring(2);
+                                                }
+                                            }
+                                            value = $"'{value.ToString().Replace("'", "''")}'";
+                                        }
+                                        else
+                                            value = $"'{value.ToString().Replace("'", "''")}'"; // trata outros tipos como string
+
+                                        valuesList.Add(value.ToString());
+                                    }
+                                    var valuesSql = string.Join(",", valuesList);
+                                    var insertSql = $"INSERT INTO [{tableName}] ({columnsSql}) VALUES ({valuesSql})";
+                                    using var insertCmd = new Microsoft.Data.SqlClient.SqlCommand(insertSql, sqlConn);
+                                    try
+                                    {
+                                        var ret = insertCmd.ExecuteNonQuery();
+                                        if (ret > 0)
+                                        {
+                                            // Sucesso
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Trate erro de insert
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Dados importados para {ex.Message}.");
+                            }
+                        }
+                    }
+                    Console.WriteLine($"Dados importados para {tableName}.");
+                }
+                catch (Exception ex)
+                {
+                    // Trate erro da tabela
+                }
+            }
+            return Ok(serviceResponse);
+        }
         [HttpPost("GetEntityWithChildrenfgfgfg")]
         public async Task<IActionResult> GetEntityWithChildrenfgfgfg([FromBody] EntityRequest request)
         {
@@ -112,11 +324,12 @@ namespace SGPMAPI.Controllers
                         }
                     }
                 }
-                
+
             }
 
             return Ok(entity);
         }
+        
         [HttpGet("GetFacts")]
         public async Task<ActionResult<IEnumerable<Fact>>> GetFacts()
         {
@@ -200,7 +413,6 @@ namespace SGPMAPI.Controllers
                 return StatusCode(500, $"Erro ao deletar o Fact: {ex.Message}");
             }
         }
-
         [HttpGet("getfield")]
         public async Task<IActionResult> GetFieldArray([FromQuery] string campo, [FromQuery] string tabela, [FromQuery] string condicao = "")
         {
@@ -235,11 +447,7 @@ namespace SGPMAPI.Controllers
                 return BadRequest("Falha");
             }
         }
-
-
-
-      
-
+        
         [HttpPost]
         [Route("GetCc")]
         public async Task<ActionResult<ServiceResponse<Mdnviewgrelha>>> GetCc([FromBody] Selects item)
@@ -365,6 +573,7 @@ namespace SGPMAPI.Controllers
             return Ok(txt);
         }
 
+       
         [HttpPost]
         [Route("MetodoGenerico")]
         public async Task<IActionResult> MetodoGenerico([FromBody] SharedClasses.Procura pro)

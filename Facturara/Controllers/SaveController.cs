@@ -1,15 +1,19 @@
-﻿using System.Text.Json;
-using DAL.BL;
+﻿using DAL.BL;
 using DAL.Classes;
 using DAL.Conexao;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Model.Models.Facturacao;
 using Model.Models.Gene;
+using Model.Models.SGPM;
 using Model.Models.SJM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SGPMAPI.Interfaces;
 using SGPMAPI.SharedClasses;
+using System.Reflection;
+using System.Text.Json;
+using static DAL.BL.EF;
 using EF = DAL.BL.EF;
 
 namespace SGPMAPI.Controllers
@@ -75,7 +79,7 @@ namespace SGPMAPI.Controllers
                             {
                                 busca.codBusca = SQL.Maximo("busca", "codBusca", $" numtabela={busca.numTabela}");
                             }
-                            var retst = await EF.Save(busca);
+                            var retst = await Save(busca);
                             rsp.Dados = busca;
                              rsp.Mensagem = "";
                             rsp.Sucesso = true;
@@ -99,7 +103,7 @@ namespace SGPMAPI.Controllers
                             {
                                 unidade.codUnidade = SQL.Maximo("Unidade", "codUnidade", $" orgaoStamp='{unidade.orgaoStamp}'");
                             }
-                            var retsst = await EF.Save(unidade);
+                            var retsst = await Save(unidade);
 
                             rsp.Dados = unidade;
                             rsp.Mensagem = "";
@@ -124,7 +128,7 @@ namespace SGPMAPI.Controllers
                             {
                                 Orgao.codOrgao = SQL.Maximo("Orgao", "codOrgao");
                             }
-                            var rsetsst = await EF.Save(Orgao);
+                            var rsetsst = await Save(Orgao);
                             rsp.Dados = Orgao;
                             rsp.Mensagem = "";
                             rsp.Sucesso = true;
@@ -160,7 +164,7 @@ namespace SGPMAPI.Controllers
                             {
                                 unidade.ProcessoStamp = Pbl.Stamp();
                             }
-                            var retsst = await EF.Save(unidade);
+                            var retsst = await Save(unidade);
 
                             rsp.Dados = unidade;
                             rsp.Mensagem = "";
@@ -210,7 +214,6 @@ namespace SGPMAPI.Controllers
                 return StatusCode(500, $"Erro ao executar a operação, Código do erro {ex.Message}");
             }
         }
-
         [HttpPost("SaveWithChildren")]
         [DisableRequestSizeLimit]
         public async Task<IActionResult> SaveWithChildren([FromBody] object obj)
@@ -219,19 +222,37 @@ namespace SGPMAPI.Controllers
             {
                 string json = JsonConvert.SerializeObject(obj);
                 using JsonDocument doc = JsonDocument.Parse(json);
-                var assembly = typeof(Exemplo).Assembly;
                 string? tipo = doc.RootElement.GetProperty("tipo").GetString();
+
                 if (string.IsNullOrEmpty(tipo))
                     return BadRequest(new { error = "Tipo não informado." });
-                Type? type = assembly.GetTypes().FirstOrDefault(t => t.Name.Equals(tipo, StringComparison.OrdinalIgnoreCase));
+
+                Type? type = EntityTypeFactory.GetTypeByName(tipo);
                 if (type == null)
-                    return BadRequest(new { error = "Tipo não encontrado." });
+                    return BadRequest(new
+                    {
+                        error = $"Tipo '{tipo}' não é suportado.",
+                        availableTypes = EntityTypeFactory.GetAvailableTypes()
+                    });
+
+
+                // Verificar se o tipo está registrado no contexto
+                var entityType = _dbContext.Model.FindEntityType(type);
+                if (entityType == null)
+                    return BadRequest(new { error = $"Tipo '{tipo}' não está registrado no contexto do Entity Framework." });
 
                 var entidade = JsonConvert.DeserializeObject(json, type);
                 if (entidade == null)
                     return BadRequest(new { error = "Objeto inválido." });
 
-                await EF.SaveEntityWithChildrenAsync(_dbContext, entidade);
+                // Usar reflexão para chamar o método genérico
+                var saveMethod = typeof(EF).GetMethod(nameof(EntitySaveHelper.SaveEntityWithChildrenAsync), BindingFlags.Public | BindingFlags.Static)
+                    ?.MakeGenericMethod(type);
+
+                if (saveMethod == null)
+                    return BadRequest(new { error = "Método de salvamento não encontrado." });
+
+                await ((Task)saveMethod.Invoke(null, new[] { _dbContext, entidade, null })!)!;
 
                 return Ok(new { success = true, message = "Objeto e filhos salvos com sucesso." });
             }
@@ -240,6 +261,38 @@ namespace SGPMAPI.Controllers
                 return StatusCode(500, $"Erro ao salvar: {ex.Message}");
             }
         }
+
+        //[HttpPost("SaveWithChildren")]
+        //[DisableRequestSizeLimit]
+        //public async Task<IActionResult> SaveWithChildren([FromBody] object obj)
+        //{
+        //    try
+        //    {
+        //        string json = JsonConvert.SerializeObject(obj);
+        //        using JsonDocument doc = JsonDocument.Parse(json);
+        //        var assembly = typeof(Exemplo).Assembly;
+        //        string? tipo = doc.RootElement.GetProperty("tipo").GetString();
+        //        if (string.IsNullOrEmpty(tipo))
+        //            return BadRequest(new { error = "Tipo não informado." });
+        //        Type? type = assembly.GetTypes().FirstOrDefault(t => t.Name.Equals(tipo, StringComparison.OrdinalIgnoreCase));
+        //        if (type == null)
+        //            return BadRequest(new { error = "Tipo não encontrado." });
+
+        //        var entidade = JsonConvert.DeserializeObject(json, type);
+        //        var unidade = JsonConvert.DeserializeObject<Mil>(json);
+        //        if (entidade == null)
+        //            return BadRequest(new { error = "Objeto inválido." });
+
+
+        //        await EF.SaveEntityWithChildrenAsync(_dbContext, unidade);
+
+        //        return Ok(new { success = true, message = "Objeto e filhos salvos com sucesso." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Erro ao salvar: {ex.Message}");
+        //    }
+        //}
 
         [HttpDelete("{tipo}/{id}")]
         public async Task<IActionResult> ApagarObjecto(string tipo, string id)

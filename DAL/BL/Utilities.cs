@@ -469,17 +469,28 @@ namespace DAL.BL
             {
                 buildCond = $" Convert(date,{campo}) ='{cond}' ";
             }
-            if (InList(type, new List<string> { "decimal", "numeric" }))
+            if (InList(type, new List<string> { "decimal", "numeric" ,"bigint","int","float","double"}))
             {
-                buildCond = $" {campo} ={Convert.ToDecimal(cond)} ";
+                if (cond.ToDecimal()>0)
+                {
+                    buildCond = $" {campo} ={cond.ToDecimal()} and {cond1}";
+                }
+                else
+                {
+                    buildCond = $" {cond1} ";
+                }
             }
             if (type == "bit")
             {
-                buildCond = $" {campo} ={Convert.ToInt32(cond)} ";
+                buildCond = $" {campo} ={cond.ToInt()} ";
             }
             if (!string.IsNullOrEmpty(cond1))
             {
-                buildCond = $" {cond1} and {buildCond}";
+
+                if (!cond1.Equals(buildCond))
+                {
+                    buildCond = $" {cond1} and {buildCond}";
+                }
             }
             return buildCond;
         }

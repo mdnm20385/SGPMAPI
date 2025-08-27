@@ -1,4 +1,5 @@
 ﻿using DAL.Classes;
+using Model.Models.Facturacao;
 using Model.Models.SJM;
 
 namespace SGPMAPI.Interfaces
@@ -13,6 +14,8 @@ namespace SGPMAPI.Interfaces
         public string? Mensagem { get; set; } = "";
         public string? refresh_token { get; set; } = "eJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7ImlkIjoxLCJ1c2VybmFtZSI6Im5nLW1hdGVybyIsIm5hbWUiOiJab25nYmluIiwiZW1haWwiOiJuemIzMjlAMTYzLmNvbSIsImF2YXRhciI6Ii4vYXNzZXRzL2ltYWdlcy9hdmF0YXIuanBnIn19." + Pbl.Encrypt(DateTime.Now.ToString());
         public Usuario? Usuario { get; set; }
+        public object Menuusr { get; set; }
+       
     }
     public class CampoSessoes
     {
